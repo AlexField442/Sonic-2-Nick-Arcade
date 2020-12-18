@@ -8,15 +8,17 @@ Go_PSGIndex:	dc.l PSG_Index
 ; PSG instruments used in music
 ; ---------------------------------------------------------------------------
 PSG_Index:	dc.l PSG1, PSG2, PSG3, PSG4, PSG5, PSG6, PSG7, PSG8, PSG9
-PSG1:		dc.b   0,  0,  0,  1,  1,  1,  2,  2,  2,  3,  3,  3,  4,  4,  4,  5,  5,  5,  6,  6,  6,  7,$80
-PSG2:		dc.b   0,  2,  4,  6,  8,$10,$80
-PSG3:		dc.b   0,  0,  1,  1,  2,  2,  3,  3,  4,  4,  5,  5,  6,  6,  7,  7,$80
-PSG4:		dc.b   0,  0,  2,  3,  4,  4,  5,  5,  5,  6,$80
-PSG6:		dc.b   3,  3,  3,  2,  2,  2,  2,  1,  1,  1,  0,  0,  0,  0,$80
-PSG5:		dc.b   0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  2,  2,  2,  2,  2,  2,  2,  2,  3,  3,  3,  3,  3,  3,  3,  3,  4,$80
-PSG7:		dc.b   0,  0,  0,  0,  0,  0,  1,  1,  1,  1,  1,  2,  2,  2,  2,  2,  3,  3,  3,  4,  4,  4,  5,  5,  5,  6,  7,$80
-PSG8:		dc.b   0,  0,  0,  0,  0,  1,  1,  1,  1,  1,  2,  2,  2,  2,  2,  2,  3,  3,  3,  3,  3,  4,  4,  4,  4,  4,  5,  5,  5,  5,  5,  6,  6,  6,  6,  6,  7,  7,  7,$80
-PSG9:		dc.b   0,  1,  2,  3,  4,  5,  6,  7,  8,  9, $A, $B, $C, $D, $E, $F,$80
+		even
+PSG1:		incbin "sound/PSG/psg1.bin"
+PSG2:		incbin "sound/PSG/psg2.bin"
+PSG3:		incbin "sound/PSG/psg3.bin"
+PSG4:		incbin "sound/PSG/psg4.bin"
+PSG6:		incbin "sound/PSG/psg6.bin"
+PSG5:		incbin "sound/PSG/psg5.bin"
+PSG7:		incbin "sound/PSG/psg7.bin"
+PSG8:		incbin "sound/PSG/psg8.bin"
+PSG9:		incbin "sound/PSG/psg9.bin"
+		even
 ; byte_71A94:
 SpedUpTempoTable:	dc.b   7,$72,$73,$26,$15,  8,$FF,  5
 ; ---------------------------------------------------------------------------
@@ -98,7 +100,7 @@ loc_71BA8:
 		jsr	UpdateFadeIn(pc)
 
 loc_71BB2:
-		; Should be a long-word, being PlaySound_Unk is broken
+		; Should be a long-word, otherwise PlaySound_Unk is broken
 		tst.w	SFXToPlay(a6)	; is music or sound being played?
 		beq.s	loc_71BBC	; if not, branch
 		jsr	CycleQueue(pc)
@@ -1295,7 +1297,7 @@ InitMusicPlayback:
 		move.b	$27(a6),d2
 		move.b	$2A(a6),d3
 		move.b	$26(a6),d4
-		; Should be a long-word, being PlaySound_Unk is broken
+		; Should be a long-word, otherwise PlaySound_Unk is broken
 		move.w	SFXToPlay(a6),d5
 		move.w	#$87,d0
 
@@ -1306,7 +1308,7 @@ loc_725E4:
 		move.b	d2,$27(a6)
 		move.b	d3,$2A(a6)
 		move.b	d4,$26(a6)
-		; Should be a long-word, being PlaySound_Unk is broken
+		; Should be a long-word, otherwise PlaySound_Unk is broken
 		move.w	d5,SFXToPlay(a6)
 		move.b	#-$80,QueueToPlay(a6)
 		jsr	FMSilenceAll(pc)
@@ -1784,27 +1786,27 @@ coordflagLookup:
 		bra.w	cfSetCommunication	; $E2
 		bra.w	cfJumpReturn		; $E3
 		bra.w	cfFadeInToPrevious	; $E4
-		bra.w	loc_72B9E
-		bra.w	loc_72BA4
-		bra.w	loc_72BAE
-		bra.w	loc_72BB4
-		bra.w	loc_72BBE
-		bra.w	loc_72BC6
-		bra.w	loc_72BD0
-		bra.w	loc_72BE6
-		bra.w	loc_72BEE
-		bra.w	loc_72BF4
-		bra.w	loc_72C26
-		bra.w	loc_72D30
-		bra.w	loc_72D52
-		bra.w	loc_72D58
-		bra.w	loc_72E06
-		bra.w	loc_72E20
-		bra.w	loc_72E26
-		bra.w	loc_72E2C
-		bra.w	loc_72E38
-		bra.w	loc_72E52
-		bra.w	loc_72E64
+		bra.w	cfSetTempoDivider	; $E5
+		bra.w	cfChangeFMVolume        ; $E6
+		bra.w	cfHoldNote              ; $E7
+		bra.w	cfNoteTimeout           ; $E8
+		bra.w	cfChangeTransposition   ; $E9
+		bra.w	cfSetTempo              ; $EA
+		bra.w	cfSetTempoDividerAll    ; $EB
+		bra.w	cfChangePSGVolume	; $EC
+		bra.w	cfClearPush             ; $ED
+		bra.w	cfStopSpecialFM4        ; $EE
+		bra.w	cfSetVoice		; $EF
+		bra.w	cfModulation            ; $F0
+		bra.w	cfEnableModulation	; $F1
+		bra.w	cfStopTrack		; $F2
+		bra.w	cfSetPSGNoise		; $F3
+		bra.w	cfDisableModulation	; $F4
+		bra.w	cfSetPSGTone		; $F5
+		bra.w	cfJumpTo		; $F6
+		bra.w	cfRepeatAtPos		; $F7
+		bra.w	cfJumpToGosub		; $F8
+		bra.w	cfOpF9			; $F9
 ; ===========================================================================
 ; Sets either AMS or FMS panning, can't be both.
 ; loc_72ACC:
@@ -1900,42 +1902,49 @@ loc_72B78:
 		addq.w	#8,sp
 		rts
 ; ===========================================================================
-
-loc_72B9E:				; CODE XREF: ROM:00072A78j
+; Used to change the tempo divider
+; loc_72B9E:
+cfSetTempoDivider:				; CODE XREF: ROM:00072A78j
 		move.b	(a4)+,2(a5)
 		rts
 ; ===========================================================================
-
-loc_72BA4:				; CODE XREF: ROM:00072A7Cj
+; Changing an FM channels volume
+; loc_72BA4:
+cfChangeFMVolume:				; CODE XREF: ROM:00072A7Cj
 		move.b	(a4)+,d0
 		add.b	d0,9(a5)
 		bra.w	SetChanVol
 ; ===========================================================================
-
-loc_72BAE:				; CODE XREF: ROM:00072A80j
+; Basically a no-attack flag.
+; loc_72BAE:
+cfHoldNote:				; CODE XREF: ROM:00072A80j
 		bset	#4,(a5)
 		rts
 ; ===========================================================================
-
-loc_72BB4:				; CODE XREF: ROM:00072A84j
+; Number of frames until a note is dead
+; loc_72BB4:
+cfNoteTimeout:				; CODE XREF: ROM:00072A84j
 		move.b	(a4),$12(a5)
 		move.b	(a4)+,$13(a5)
 		rts
 ; ===========================================================================
-
-loc_72BBE:				; CODE XREF: ROM:00072A88j
+; Adds a (signed) number to the channel key displacement
+; loc_72BBE:
+cfChangeTransposition:				; CODE XREF: ROM:00072A88j
 		move.b	(a4)+,d0
 		add.b	d0,8(a5)
 		rts
 ; ===========================================================================
-
-loc_72BC6:				; CODE XREF: ROM:00072A8Cj
+; Sets the tempo of the song
+; loc_72BC6:
+cfSetTempo:				; CODE XREF: ROM:00072A8Cj
 		move.b	(a4),2(a6)
 		move.b	(a4)+,1(a6)
 		rts
 ; ===========================================================================
-
-loc_72BD0:				; CODE XREF: ROM:00072A90j
+; Sets the tempo divider for all music tracks (does nothing on SFX)
+;loc_72BD0:
+cfSetTempoDividerAll:                   ; CODE XREF: ROM:00072A90j
 		lea	$40(a6),a0
 		move.b	(a4)+,d0
 		moveq	#$30,d1
@@ -1947,19 +1956,24 @@ loc_72BDA:				; CODE XREF: ROM:00072BE0j
 		dbf	d2,loc_72BDA
 		rts
 ; ===========================================================================
-
-loc_72BE6:				; CODE XREF: ROM:00072A94j
+; Basically a PSG version of cfChangeFMVolume
+; (it does work on FM channels but only on next voice change)
+; loc_72BE6:
+cfChangePSGVolume:				; CODE XREF: ROM:00072A94j
 		move.b	(a4)+,d0
 		add.b	d0,9(a5)
 		rts
 ; ===========================================================================
-
-loc_72BEE:				; CODE XREF: ROM:00072A98j
+; Clears the "pushing" flag on the pushing sound
+; loc_72BEE:
+cfClearPush:				; CODE XREF: ROM:00072A98j
 		clr.b	$2C(a6)
 		rts
 ; ===========================================================================
-
-loc_72BF4:				; CODE XREF: ROM:00072A9Cj
+; Stops FM4 if it's on a special SFX and in $D0-$DF
+; (does nothing on any other channel/SFX, otherwise it'll send it to currently playing music)
+; loc_72BF4:
+cfStopSpecialFM4:				; CODE XREF: ROM:00072A9Cj
 		bclr	#7,(a5)
 		bclr	#4,(a5)
 		jsr	FMNoteOff(pc)
@@ -1978,8 +1992,9 @@ loc_72C22:				; CODE XREF: ROM:00072C04j
 		addq.w	#8,sp
 		rts
 ; ===========================================================================
-
-loc_72C26:				; CODE XREF: ROM:00072AA0j
+; Changes the voice to the specified parameter (not meant for PSG/DAC)
+; loc_72C26:
+cfSetVoice:				; CODE XREF: ROM:00072AA0j
 		moveq	#0,d0
 		move.b	(a4)+,d0
 		move.b	d0,$B(a5)
@@ -2104,8 +2119,9 @@ byte_72D18:	dc.b $30, $38, $34, $3C, $50, $58, $54,	$5C, $60, $68
 		dc.b $64, $6C, $70, $78, $74, $7C, $80,	$88, $84, $8C
 byte_72D2C:	dc.b $40, $48, $44, $4C
 ; ===========================================================================
-
-loc_72D30:				; CODE XREF: ROM:00072AA4j
+; Uses 4 parameters, wait speed, modulation speed, change per step, and number of steps
+; loc_72D30:
+cfModulation:				; CODE XREF: ROM:00072AA4j
 		bset	#3,(a5)
 		move.l	a4,$14(a5)
 		move.b	(a4)+,$18(a5)
@@ -2117,13 +2133,15 @@ loc_72D30:				; CODE XREF: ROM:00072AA4j
 		clr.w	$1C(a5)
 		rts
 ; ===========================================================================
-
-loc_72D52:				; CODE XREF: ROM:00072AA8j
+; Enables modulation (only recommended to use this after the flag above)
+; loc_72D52:
+cfEnableModulation:				; CODE XREF: ROM:00072AA8j
 		bset	#3,(a5)
 		rts
 ; ===========================================================================
-
-loc_72D58:				; CODE XREF: ROM:00072AACj
+; Stops the current track
+; loc_72D58:
+cfStopTrack:				; CODE XREF: ROM:00072AACj
 		bclr	#7,(a5)
 		bclr	#4,(a5)
 		tst.b	1(a5)
@@ -2202,8 +2220,9 @@ loc_72E02:				; CODE XREF: ROM:00072D6Aj
 		addq.w	#8,sp
 		rts
 ; ===========================================================================
-
-loc_72E06:				; CODE XREF: ROM:00072AB0j
+; Turns on the noise channel (only use $E0 - $E7 as parameter bytes)
+; loc_72E06
+cfSetPSGNoise:				; CODE XREF: ROM:00072AB0j
 		move.b	#-$20,1(a5)
 		move.b	(a4)+,$1F(a5)
 		btst	#2,(a5)
@@ -2213,18 +2232,21 @@ loc_72E06:				; CODE XREF: ROM:00072AB0j
 locret_72E1E:				; CODE XREF: ROM:00072E14j
 		rts
 ; ===========================================================================
-
-loc_72E20:				; CODE XREF: ROM:00072AB4j
+; Disables modulation
+; loc_72E20:
+cfDisableModulation:				; CODE XREF: ROM:00072AB4j
 		bclr	#3,(a5)
 		rts
 ; ===========================================================================
-
-loc_72E26:				; CODE XREF: ROM:00072AB8j
+; Uses parameter byte to change the PSG envelope
+; loc_72E26:
+cfSetPSGTone:				; CODE XREF: ROM:00072AB8j
 		move.b	(a4)+,$B(a5)
 		rts
 ; ===========================================================================
-
-loc_72E2C:				; CODE XREF: ROM:00072ABCj
+; SMPS equevilant of JMP (2-byte big endian offset + 1)
+; loc_72E2C:
+cfJumpTo:				; CODE XREF: ROM:00072ABCj
 					; ROM:00072E4Cj ...
 		move.b	(a4)+,d0
 		lsl.w	#8,d0
@@ -2233,8 +2255,9 @@ loc_72E2C:				; CODE XREF: ROM:00072ABCj
 		subq.w	#1,a4
 		rts
 ; ===========================================================================
-
-loc_72E38:				; CODE XREF: ROM:00072AC0j
+; Repeat a section of music (1 byte to indicate how many times to loop and 2-byte big endian offset + 1)
+; loc_72E38:
+cfRepeatAtPos:				; CODE XREF: ROM:00072AC0j
 		moveq	#0,d0
 		move.b	(a4)+,d0
 		move.b	(a4)+,d1
@@ -2244,21 +2267,24 @@ loc_72E38:				; CODE XREF: ROM:00072AC0j
 
 loc_72E48:				; CODE XREF: ROM:00072E42j
 		subq.b	#1,$24(a5,d0.w)
-		bne.s	loc_72E2C
+		bne.s	cfJumpTo
 		addq.w	#2,a4
 		rts
 ; ===========================================================================
-
-loc_72E52:				; CODE XREF: ROM:00072AC4j
+; This is basically an SMPS equivelant of BSR
+; loc_72E52:
+cfJumpToGosub:				; CODE XREF: ROM:00072AC4j
 		moveq	#0,d0
 		move.b	$D(a5),d0
 		subq.b	#4,d0
 		move.l	a4,(a5,d0.w)
 		move.b	d0,$D(a5)
-		bra.s	loc_72E2C
+		bra.s	cfJumpTo
 ; ===========================================================================
-
-loc_72E64:				; CODE XREF: ROM:00072AC8j
+; This is a really weird flag...
+; Sets the D1R max volume and RR to max for operators 3 and 4 of FM1
+; loc_72E64:
+cfOpF9:				; CODE XREF: ROM:00072AC8j
 		move.b	#-$78,d0
 		move.b	#$F,d1
 		jsr	WriteFMI(pc)
